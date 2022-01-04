@@ -14,15 +14,16 @@ typedef struct patient
     char AdmissionDate[15];
 } patient;
 
-
-int getCommand() //Function to get user's input and return it
+//Function to get user's input and return it
+int getCommand() 
 {
     int command;
     scanf("%d", &command);
     return command;
 }
 
-void printFunc() //Funtion to print default commands
+//Funtion to print default commands
+void printFunc() 
 {
     printf("\n\n---------------------------------------------------------\n");
     printf("COVID-19 PATIENT MANAGEMENT SYSTEM\n");
@@ -38,14 +39,13 @@ void printFunc() //Funtion to print default commands
 //Function to search patients within the patient array by NIC number
 void findPatient(patient *patients, int PatientCount) 
 {
-    system("cls");
     int nic, found = 0;
     printf("---------------------------------------------------------\n");
     printf("FINDING PATIENT\n");
     printf("---------------------------------------------------------\n\n");
     printf("Enter the NIC number of the patient: ");
     scanf("%d", &nic);
-    for (int i = 0; i < PatientCount; i++)
+    for (int i = 0; i < PatientCount; i++) 
     {
         if (patients[i].nic == nic)
         {
@@ -61,9 +61,9 @@ void findPatient(patient *patients, int PatientCount)
     }
 }
 
-void parintAllPatients(patient *patients, int PatientCount)
+//Function for printing all the records in the patients array
+void parintAllPatients(patient *patients, int PatientCount) 
 {
-    system("cls");
     int nic, found = 0;
     printf("---------------------------------------------------------\n");
     printf("All RECORDS\n");
@@ -88,11 +88,13 @@ patient addPatient()
 {
 
     patient new; //Creating new object and returning it
+    int temp;
     printf("---------------------------------------------------------\n");
     printf("ADMITTING NEW PATIENT\n");
     printf("---------------------------------------------------------\n");
+    scanf("%c", &temp);
     printf("Enter Name: ");
-    scanf("%s", new.name);
+    scanf("%[^\n]", &new.name);
     printf("Enter NIC: ");
     scanf("%d", &new.nic);
     printf("Enter Gender: ");
@@ -121,9 +123,11 @@ void main()
             PatientCount++;
             break;
         case 2:
+            system("cls");
             findPatient(patients, PatientCount);
             break;
         case 3:
+            system("cls");
             parintAllPatients(patients, PatientCount);
             break;
         case 4:
