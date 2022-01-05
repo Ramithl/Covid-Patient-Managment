@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <conio.h>
 
 //Initializing Structure
 typedef struct patient
@@ -109,6 +110,7 @@ void main()
 {
     patient *patients = (patient *)malloc(sizeof(patient)); //Initilizing patients structure array
     int command, quit = 0, PatientCount = 0;
+    printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 COVID PATIENTS MANAGMENT SYSTEM \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
 
     while (quit == 0)
     {
@@ -135,6 +137,9 @@ void main()
             break;
         case 0:
             exit(0);
+            break;
+        case 7:
+            printf("\e[1;1H\e[2J");
             break;
 
         default:
