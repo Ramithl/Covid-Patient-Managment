@@ -1,19 +1,38 @@
+/*
+CO253 Mini Project: COVID PATIENT MANAGEMENT SYSTEM
+Author: LAKSARA L. G. R.
+Registration No: E/18/189
+
+--CAUTION--
+Please close the terminal before compiling the program. otherwise it may cause some errors in compiling since the program included <windows.h> header file.
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
 #include <conio.h>
+#include <windows.h>
+#include <ctype.h>
 
 //Initializing Structure
 typedef struct patient
 {
-
-    int nic;
+    char nic[13];
     int age;
     char name[50];
     char gender;
     char AdmissionDate[15];
 } patient;
+
+//Funtion to move cursor around the terminal
+void gotoxy(int x, int y)
+{
+    COORD c;
+    c.X = x;
+    c.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+}
 
 //Function to get user's input and return it
 int getCommand()
@@ -39,18 +58,21 @@ void printFunc()
 //Function to search patients within the patient array by NIC number
 void findPatient(patient *patients, int PatientCount)
 {
-    int nic, found = 0;
+
     printf("---------------------------------------------------------\n");
     printf("FINDING PATIENT\n");
     printf("---------------------------------------------------------\n\n");
+    int found = 0;
+    char nic[13], temp;
+    scanf("%c", &temp);
     printf("Enter the NIC number of the patient: ");
-    scanf("%d", &nic);
+    scanf("%[^\n]", &nic);
     for (int i = 0; i < PatientCount; i++)
     {
-        if (patients[i].nic == nic)
+        if (strcmp(patients[i].nic, nic) == 0)
         {
             found = 1;
-            printf("\nName: %s\t|\tNIC: %d\t|\tAge: %d\t|\tGender: %c", patients[i].name, patients[i].nic, patients[i].age, patients[i].gender);
+            printf("\nName: %s\t|\tNIC: %s\t|\tAge: %d\t|\tGender: %c", patients[i].name, patients[i].nic, patients[i].age, patients[i].gender);
             break;
         }
     }
@@ -58,34 +80,33 @@ void findPatient(patient *patients, int PatientCount)
     if (found == 0)
     {
         system("cls");
-        printf("Sorry, There is no record for the NIC number - %d", nic);
+        printf("Sorry, There is no record for the NIC number - %s", nic);
     }
 }
 
-
 //Funtion to delete a record of a patient
-void deletePatient(patient *patients, int PatientCount){
+void deletePatient(patient *patients, int PatientCount)
+{
     printf("---------------------------------------------------------\n");
     printf("DELETE A PATIENT RECORD\n");
     printf("---------------------------------------------------------\n\n");
-    int nic, found = 0;
+    int found = 0;
+    char nic[13], temp;
+    scanf("%c", &temp);
     printf("Enter the NIC number of the patient: ");
-    scanf("%d", &nic);
+    scanf("%[^\n]", &nic);
     for (int i = 0; i < PatientCount; i++)
     {
-        if (patients[i].nic == nic)
+        if (strcmp(patients[i].nic, nic) == 0)
         {
             found = 1;
-            for (int j = i; j < PatientCount; j++)
+            for (int j = i-1; j < PatientCount; j++)
             {
-                patients[i]=patients[i+1];
+                patients[i] = patients[i + 1];
                 PatientCount--;
-                
             }
-            printf("Record of the patient %d deleted succesfully", patients[i].nic);
+            printf("Record of the patient %s deleted succesfully", patients[i].nic);
             break;
-            
-            
         }
     }
 
@@ -94,23 +115,38 @@ void deletePatient(patient *patients, int PatientCount){
         system("cls");
         printf("Sorry, There is no record for the NIC number - %d", nic);
     }
-
 }
 
 //Function for printing all the records in the patients array
 void parintAllPatients(patient *patients, int PatientCount)
 {
     int nic, found = 0;
-    printf("---------------------------------------------------------\n");
-    printf("All RECORDS\n");
-    printf("---------------------------------------------------------\n");
+    gotoxy(26, 4);
+    printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 ALL PATIENTS RECORD \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
+    gotoxy(5, 6);
+    printf("==========================================================================================");
+
+    gotoxy(5, 7);
+    printf("Name\t\t    NIC No.\t      Gender\t\tAge \t\tAdmission Date\n"); //TABLE TITLES !
+
+    gotoxy(5, 8);
+    printf("==========================================================================================");
 
     for (int i = 0; i < PatientCount; i++)
     {
-        printf("\nName: %s\t|\tNIC: %d\t|\tAge: %d\t\t|\tGender: %c", patients[i].name, patients[i].nic, patients[i].age, patients[i].gender);
+        
+        gotoxy(5, 10+i);
+        printf("%s", patients[i].name);
+        gotoxy(28, 10+i);
+        printf("%s", patients[i].nic);
+        gotoxy(46, 10+i);
+        printf("%c", patients[i].gender);
+        gotoxy(64, 10+i);
+        printf("%d", patients[i].age);
+        gotoxy(80, 10+i);
+        printf("%s", patients[i].AdmissionDate);
     }
 }
-
 
 patient addPatient()
 {
@@ -123,12 +159,16 @@ patient addPatient()
     scanf("%c", &temp);
     printf("Enter Name: ");
     scanf("%[^\n]", &new.name);
-    printf("Enter NIC: ");
-    scanf("%d", &new.nic);
+    scanf("%c", &temp);
+    printf("Enter NIC Number: ");
+    scanf("%[^\n]", &new.nic);
     printf("Enter Gender: ");
     scanf(" %c", &new.gender);
     printf("Enter Age: ");
     scanf("%d", &new.age);
+    scanf("%c", &temp);
+    printf("Enter Date of Admission: ");
+    scanf("%[^\n]", &new.AdmissionDate);
 
     return new;
 }
@@ -141,7 +181,7 @@ void main()
 
     while (quit == 0)
     {
-        
+
         printFunc();
         command = getCommand();
         switch (command)
@@ -150,14 +190,14 @@ void main()
             while (quit == 0)
             {
                 system("cls");
-                patients = (patient *)realloc(patients, (PatientCount + 1) * sizeof(patient)); //Everytime adding a new patient allocated memory increasing using realloc
+                patients = (patient *)realloc(patients, (PatientCount + 1) * sizeof(patient)); //Everytime adding a new patient allocated memory increased using realloc
                 patients[PatientCount] = addPatient();
                 PatientCount++;
-                printf("\nDo you want to add more patients? (Y/N): ");
+                printf("\n\n\nDo you want to add more patients? (Y/N): ");
                 char response;
                 scanf(" %c", &response);
                 if (response == 78 || response == 110)
-                    
+
                 {
                     break;
                 }
@@ -177,7 +217,7 @@ void main()
                 char response;
                 scanf(" %c", &response);
                 if (response == 78 || response == 110)
-                    
+
                 {
                     break;
                 }
@@ -188,13 +228,21 @@ void main()
             }
             break;
         case 3:
-            system("cls");
-            parintAllPatients(patients, PatientCount);
+            while (quit == 0)
+            {
+                system("cls");
+                parintAllPatients(patients, PatientCount);
+                printf("\n\n\n\nPress any key to return to main menu... ");
+                getch();
+                break;
+            }
             break;
         case 4:
+            system("cls");
             deletePatient(patients, PatientCount);
             break;
         case 0:
+            free(patients);
             exit(0);
             break;
         case 7:
@@ -203,15 +251,11 @@ void main()
 
         default:
             system("cls");
+            free(patients);
             printf("Please input a correct command!\nEnter: ");
-            
+
             break;
         }
+        system("cls");
     }
-
-    // patients[0] = addPatient();
-    // patients[1] = addPatient();
-
-    // printf("NIC: %d\t\tName: %s", patients[0].nic, patients[0].name);
-    // printf("\nNIC: %d\t\tName: %s", patients[1].nic, patients[1].name);
 }
