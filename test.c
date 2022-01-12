@@ -55,18 +55,36 @@ void printFunc()
     printf("ENTER: ");
 }
 
+
+//Funtion to get the longest name of the patients list
+int longestName(patient *patients, int PatientCount){
+    int maxLength=0,temp;
+    for (int i = 0; i < PatientCount; i++)
+    {
+        temp = strlen(patients[i].name);
+        if (temp>maxLength)
+        {
+            maxLength=temp;
+        }
+    }
+    return maxLength;
+}
+
+
 //Function to search patients within the patient array by NIC number
 void findPatient(patient *patients, int PatientCount)
 {
-
-    printf("---------------------------------------------------------\n");
-    printf("FINDING PATIENT\n");
-    printf("---------------------------------------------------------\n\n");
     int found = 0;
     char nic[13], temp;
+
+    printf("---------------------------------------------------------\n");
+    printf("FINDING PATIENT'S RECORD\n");
+    printf("---------------------------------------------------------\n\n");
+
     scanf("%c", &temp);
     printf("Enter the NIC number of the patient: ");
     scanf("%[^\n]", &nic);
+
     for (int i = 0; i < PatientCount; i++)
     {
         if (strcmp(patients[i].nic, nic) == 0)
@@ -84,28 +102,75 @@ void findPatient(patient *patients, int PatientCount)
     }
 }
 
-//Funtion to delete a record of a patient
-void deletePatient(patient *patients, int PatientCount)
+//Function to search patients within the patient array by NIC number and edit the corresponding record
+void editPatient(patient *patients, int PatientCount)
 {
-    printf("---------------------------------------------------------\n");
-    printf("DELETE A PATIENT RECORD\n");
-    printf("---------------------------------------------------------\n\n");
     int found = 0;
     char nic[13], temp;
+
+    printf("---------------------------------------------------------\n");
+    printf("EDIT PATIENT'S RECORD\n");
+    printf("---------------------------------------------------------\n\n");
+
     scanf("%c", &temp);
     printf("Enter the NIC number of the patient: ");
     scanf("%[^\n]", &nic);
+
     for (int i = 0; i < PatientCount; i++)
     {
         if (strcmp(patients[i].nic, nic) == 0)
         {
             found = 1;
-            for (int j = i-1; j < PatientCount; j++)
+            printf("\nName: %s\t|\tNIC: %s\t|\tAge: %d\t|\tGender: %c", patients[i].name, patients[i].nic, patients[i].age, patients[i].gender);
+            printf("\n\nDo you need to edit this patients info? (Y/N");
+            char response;
+            scanf(" %c", &response);
+            if (response == 78 || response == 110)
             {
-                patients[i] = patients[i + 1];
-                PatientCount--;
+                break;
+            }
+            else
+            {
+                continue;
+            }
+            
+        }
+    }
+
+    if (found == 0)
+    {
+        system("cls");
+        printf("Sorry, There is no record for the NIC number - %s", nic);
+    }
+}
+
+//Funtion to delete a record of a patient
+void deletePatient(patient *patients, int *PatientCount)
+{
+    int found = 0;
+    int noPatients = *PatientCount;
+    char nic[13], temp;
+
+    printf("---------------------------------------------------------\n");
+    printf("DELETE A PATIENT RECORD\n");
+    printf("---------------------------------------------------------\n\n");
+    
+    scanf("%c", &temp);
+    printf("Enter the NIC number of the patient: ");
+    scanf("%[^\n]", &nic);
+
+    for (int i = 0; i < noPatients; i++)
+    {
+        if (strcmp(patients[i].nic, nic) == 0)
+        {
+            found = 1;
+            for (int j = i; j < noPatients; j++)
+            {
+                patients[j] = patients[j + 1];
+                noPatients--;
             }
             printf("Record of the patient %s deleted succesfully", patients[i].nic);
+            *PatientCount--;
             break;
         }
     }
@@ -120,30 +185,43 @@ void deletePatient(patient *patients, int PatientCount)
 //Function for printing all the records in the patients array
 void parintAllPatients(patient *patients, int PatientCount)
 {
-    int nic, found = 0;
-    gotoxy(26, 4);
+    int nic,MaxNameLength, found = 0;
+    MaxNameLength=longestName(patients, PatientCount);
+    gotoxy(5+(int)((MaxNameLength+19)/2), 4);
     printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 ALL PATIENTS RECORD \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
     gotoxy(5, 6);
-    printf("==========================================================================================");
-
+    for (int i = 0; i < MaxNameLength+64; i++)
+    {
+        printf("=");
+    }
+    
     gotoxy(5, 7);
-    printf("Name\t\t    NIC No.\t      Gender\t\tAge \t\tAdmission Date\n"); //TABLE TITLES !
-
+    printf("Name"); //TABLE TITLES !
+    gotoxy(5+MaxNameLength+5, 7);
+    printf("NIC NO.");
+    gotoxy(5+MaxNameLength+5+12+5, 7);
+    printf("Gender");
+    gotoxy(5+MaxNameLength+5+12+5+8+5, 7);
+    printf("Age");
+    gotoxy(5+MaxNameLength+5+12+5+8+5+9+5, 7);
+    printf("Admission Date");
     gotoxy(5, 8);
-    printf("==========================================================================================");
+    for (int i = 0; i < MaxNameLength+64; i++)
+    {
+        printf("=");
+    }
 
     for (int i = 0; i < PatientCount; i++)
     {
-        
         gotoxy(5, 10+i);
         printf("%s", patients[i].name);
-        gotoxy(28, 10+i);
+        gotoxy(5+MaxNameLength+5, 10+i);
         printf("%s", patients[i].nic);
-        gotoxy(46, 10+i);
+        gotoxy(5+MaxNameLength+5+12+5, 10+i);
         printf("%c", patients[i].gender);
-        gotoxy(64, 10+i);
-        printf("%d", patients[i].age);
-        gotoxy(80, 10+i);
+        gotoxy(5+MaxNameLength+5+12+5+8+5, 10+i);
+        printf("%d Years", patients[i].age);
+        gotoxy(5+MaxNameLength+5+12+5+8+5+9+5, 10+i);
         printf("%s", patients[i].AdmissionDate);
     }
 }
@@ -153,21 +231,22 @@ patient addPatient()
 
     patient new; //Creating new object and returning it
     int temp;
+
     printf("---------------------------------------------------------\n");
     printf("ADMITTING NEW PATIENT\n");
     printf("---------------------------------------------------------\n");
-    scanf("%c", &temp);
-    printf("Enter Name: ");
+    scanf("%c", &temp); //Temp variable to skip new line of previous line
+    printf("Enter Name (Max Characters = 50): ");
     scanf("%[^\n]", &new.name);
     scanf("%c", &temp);
-    printf("Enter NIC Number: ");
+    printf("Enter NIC Number [Example: 991312154V/19991312154]: ");
     scanf("%[^\n]", &new.nic);
-    printf("Enter Gender: ");
+    printf("Enter Gender [M/F]: ");
     scanf(" %c", &new.gender);
-    printf("Enter Age: ");
+    printf("Enter Age [Example: 22]: ");
     scanf("%d", &new.age);
     scanf("%c", &temp);
-    printf("Enter Date of Admission: ");
+    printf("Enter Date of Admission [Example: 2022/01/01]: ");
     scanf("%[^\n]", &new.AdmissionDate);
 
     return new;
@@ -177,11 +256,10 @@ void main()
 {
     patient *patients = (patient *)malloc(sizeof(patient)); //Initilizing patients structure array
     int command, quit = 0, PatientCount = 0;
-    printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 COVID PATIENTS MANAGMENT SYSTEM \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
+    
 
     while (quit == 0)
     {
-
         printFunc();
         command = getCommand();
         switch (command)
@@ -206,7 +284,6 @@ void main()
                     continue;
                 }
             }
-
             break;
         case 2:
             while (quit == 0)
@@ -239,7 +316,8 @@ void main()
             break;
         case 4:
             system("cls");
-            deletePatient(patients, PatientCount);
+            deletePatient(patients, &PatientCount);
+            patients = (patient *)realloc(patients, (PatientCount-1)* sizeof(patient));
             break;
         case 0:
             free(patients);
@@ -253,7 +331,6 @@ void main()
             system("cls");
             free(patients);
             printf("Please input a correct command!\nEnter: ");
-
             break;
         }
         system("cls");
