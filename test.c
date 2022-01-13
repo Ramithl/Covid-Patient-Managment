@@ -48,28 +48,48 @@ void printFunc()
     printf("\n\n---------------------------------------------------------\n");
     printf("COVID-19 PATIENT MANAGEMENT SYSTEM\n");
     printf("---------------------------------------------------------\n");
-    printf("0. Quit\n1. Add a Patient Record\n2. Print a Patient Record\n3. Print all Patient Record\n4. Delete a Patient Record\n");
+    printf("0. Quit\n1. Add a Patient Record\n2. Print a Patient Record\n3. Print all Patient Record\n4. Delete a Patient Record\n5. Sort records by name alphabetically");
     printf("---------------------------------------------------------\n");
     printf("ENTER OPTION [0-4]\n");
     printf("---------------------------------------------------------\n\n");
     printf("ENTER: ");
 }
 
-
 //Funtion to get the longest name of the patients list
-int longestName(patient *patients, int PatientCount){
-    int maxLength=0,temp;
+int longestName(patient *patients, int PatientCount)
+{
+    int maxLength = 0, temp;
     for (int i = 0; i < PatientCount; i++)
     {
         temp = strlen(patients[i].name);
-        if (temp>maxLength)
+        if (temp > maxLength)
         {
-            maxLength=temp;
+            maxLength = temp;
         }
     }
     return maxLength;
 }
 
+//Funtion to sort array alphabetically
+void sortArrayName(patient *patients, int PatientCount)
+{
+    patient temp;
+
+    //Sort array using the Buuble Sort algorithm
+    for (int i = 0; i < PatientCount; i++)
+    {
+        for (int j = 0; j < PatientCount - 1 - i; j++)
+        {
+            if (strcmp(patients[j].name, patients[j + 1].name) > 0)
+            {
+                //swap patients[j] and patients[j+1]
+                temp = patients[j];
+                patients[j]=patients[j+1];
+                patients[j+1]=temp;
+            }
+        }
+    }
+}
 
 //Function to search patients within the patient array by NIC number
 void findPatient(patient *patients, int PatientCount)
@@ -133,7 +153,6 @@ void editPatient(patient *patients, int PatientCount)
             {
                 continue;
             }
-            
         }
     }
 
@@ -154,7 +173,7 @@ void deletePatient(patient *patients, int *PatientCount)
     printf("---------------------------------------------------------\n");
     printf("DELETE A PATIENT RECORD\n");
     printf("---------------------------------------------------------\n\n");
-    
+
     scanf("%c", &temp);
     printf("Enter the NIC number of the patient: ");
     scanf("%[^\n]", &nic);
@@ -185,43 +204,43 @@ void deletePatient(patient *patients, int *PatientCount)
 //Function for printing all the records in the patients array
 void parintAllPatients(patient *patients, int PatientCount)
 {
-    int nic,MaxNameLength, found = 0;
-    MaxNameLength=longestName(patients, PatientCount);
-    gotoxy(5+(int)((MaxNameLength+19)/2), 4);
+    int nic, MaxNameLength, found = 0;
+    MaxNameLength = longestName(patients, PatientCount);
+    gotoxy(5 + (int)((MaxNameLength + 19) / 2), 4);
     printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 ALL PATIENTS RECORD \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
     gotoxy(5, 6);
-    for (int i = 0; i < MaxNameLength+64; i++)
+    for (int i = 0; i < MaxNameLength + 64; i++)
     {
         printf("=");
     }
-    
+
     gotoxy(5, 7);
     printf("Name"); //TABLE TITLES !
-    gotoxy(5+MaxNameLength+5, 7);
+    gotoxy(5 + MaxNameLength + 5, 7);
     printf("NIC NO.");
-    gotoxy(5+MaxNameLength+5+12+5, 7);
+    gotoxy(5 + MaxNameLength + 5 + 12 + 5, 7);
     printf("Gender");
-    gotoxy(5+MaxNameLength+5+12+5+8+5, 7);
+    gotoxy(5 + MaxNameLength + 5 + 12 + 5 + 8 + 5, 7);
     printf("Age");
-    gotoxy(5+MaxNameLength+5+12+5+8+5+9+5, 7);
+    gotoxy(5 + MaxNameLength + 5 + 12 + 5 + 8 + 5 + 9 + 5, 7);
     printf("Admission Date");
     gotoxy(5, 8);
-    for (int i = 0; i < MaxNameLength+64; i++)
+    for (int i = 0; i < MaxNameLength + 64; i++)
     {
         printf("=");
     }
 
     for (int i = 0; i < PatientCount; i++)
     {
-        gotoxy(5, 10+i);
+        gotoxy(5, 10 + i);
         printf("%s", patients[i].name);
-        gotoxy(5+MaxNameLength+5, 10+i);
+        gotoxy(5 + MaxNameLength + 5, 10 + i);
         printf("%s", patients[i].nic);
-        gotoxy(5+MaxNameLength+5+12+5, 10+i);
+        gotoxy(5 + MaxNameLength + 5 + 12 + 5, 10 + i);
         printf("%c", patients[i].gender);
-        gotoxy(5+MaxNameLength+5+12+5+8+5, 10+i);
+        gotoxy(5 + MaxNameLength + 5 + 12 + 5 + 8 + 5, 10 + i);
         printf("%d Years", patients[i].age);
-        gotoxy(5+MaxNameLength+5+12+5+8+5+9+5, 10+i);
+        gotoxy(5 + MaxNameLength + 5 + 12 + 5 + 8 + 5 + 9 + 5, 10 + i);
         printf("%s", patients[i].AdmissionDate);
     }
 }
@@ -256,7 +275,6 @@ void main()
 {
     patient *patients = (patient *)malloc(sizeof(patient)); //Initilizing patients structure array
     int command, quit = 0, PatientCount = 0;
-    
 
     while (quit == 0)
     {
@@ -317,22 +335,29 @@ void main()
         case 4:
             system("cls");
             deletePatient(patients, &PatientCount);
-            patients = (patient *)realloc(patients, (PatientCount-1)* sizeof(patient));
+            patients = (patient *)realloc(patients, (PatientCount - 1) * sizeof(patient));
             break;
         case 0:
             free(patients);
             exit(0);
             break;
         case 7:
-            printf("\e[1;1H\e[2J");
+            system("cls");
+            sortArrayName(patients, PatientCount);
+            printf("Records ares sorted by name alphabetically");
+            printf("\n\n\n\nPress any key to return to main menu... ");
+            getch();
             break;
 
         default:
+            command = 1;
             system("cls");
-            free(patients);
-            printf("Please input a correct command!\nEnter: ");
+            printf("!!Please input a correct command!!");
+            printf("\n\nPress any key to continue... ");
+            getch();
             break;
         }
         system("cls");
+        command = 1;
     }
 }
