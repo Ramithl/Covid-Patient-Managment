@@ -48,7 +48,7 @@ void printFunc()
     printf("\n\n---------------------------------------------------------\n");
     printf("COVID-19 PATIENT MANAGEMENT SYSTEM\n");
     printf("---------------------------------------------------------\n");
-    printf("0. Quit\n1. Add a Patient Record\n2. Print a Patient Record\n3. Print all Patient Record\n4. Delete a Patient Record\n5. Sort records by name alphabetically");
+    printf("0. Quit\n1. Add a Patient Record\n2. Print a Patient Record\n3. Print all Patient Record\n4. Delete a Patient Record\n5. Sort records by name alphabetically\n");
     printf("---------------------------------------------------------\n");
     printf("ENTER OPTION [0-4]\n");
     printf("---------------------------------------------------------\n\n");
@@ -84,12 +84,14 @@ void sortArrayName(patient *patients, int PatientCount)
             {
                 //swap patients[j] and patients[j+1]
                 temp = patients[j];
-                patients[j]=patients[j+1];
-                patients[j+1]=temp;
+                patients[j] = patients[j + 1];
+                patients[j + 1] = temp;
             }
         }
     }
 }
+
+
 
 //Function to search patients within the patient array by NIC number
 void findPatient(patient *patients, int PatientCount)
@@ -189,7 +191,6 @@ void deletePatient(patient *patients, int *PatientCount)
                 noPatients--;
             }
             printf("Record of the patient %s deleted succesfully", patients[i].nic);
-            *PatientCount--;
             break;
         }
     }
@@ -335,13 +336,14 @@ void main()
         case 4:
             system("cls");
             deletePatient(patients, &PatientCount);
-            patients = (patient *)realloc(patients, (PatientCount - 1) * sizeof(patient));
+            PatientCount--;
+            patients = (patient *)realloc(patients, (PatientCount) * sizeof(patient));
             break;
         case 0:
             free(patients);
             exit(0);
             break;
-        case 7:
+        case 5:
             system("cls");
             sortArrayName(patients, PatientCount);
             printf("Records ares sorted by name alphabetically");
