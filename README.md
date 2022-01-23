@@ -9,5 +9,5 @@ This is a mini project of CO253 Module of the course. The program was implemente
 - Search a patients record
 - Edit a record
 - Delete a record
-- Sort the data base
+- Sort the database
 
